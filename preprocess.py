@@ -4,7 +4,7 @@ Version: 1.0
 Author: ZhangHongYu
 Date: 2021-02-18 13:15:08
 LastEditors: ZhangHongYu
-LastEditTime: 2021-02-20 21:58:11
+LastEditTime: 2021-02-21 01:03:06
 '''
 import pandas as pd
 import numpy as np
@@ -64,7 +64,6 @@ def features_eng(data):
         data[features_fillna].mode().iloc[0]
     )
 
-    print(data.shape)
     # 字符独热编码，数值归一化
     for col in data.columns:
         if col == '是否高转送':  # 跳过标签列

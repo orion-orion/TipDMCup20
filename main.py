@@ -4,7 +4,7 @@ Version: 1.0
 Author: ZhangHongYu
 Date: 2021-02-18 13:18:01
 LastEditors: ZhangHongYu
-LastEditTime: 2021-02-20 21:58:23
+LastEditTime: 2021-02-21 01:03:19
 '''
 from preprocess import read_data
 from preprocess import features_eng
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
 
     # 采用交叉验证法对初级学习器和次级学习器进行训练
-    train_model(X_train, y_train)
+    # train_model(X_train, y_train)
 
     # 评估学习器的性能
     evaluate_model(X_test, y_test)
