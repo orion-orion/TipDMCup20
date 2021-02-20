@@ -4,7 +4,7 @@ Version: 1.0
 Author: ZhangHongYu
 Date: 2021-02-18 13:15:08
 LastEditors: ZhangHongYu
-LastEditTime: 2021-02-20 15:05:13
+LastEditTime: 2021-02-20 21:58:11
 '''
 import pandas as pd
 import numpy as np
@@ -12,7 +12,7 @@ import os
 from sklearn import preprocessing
 
 # 数据存放目录定义
-data_root = '/mnt/mydisk/data/A题全部数据/'
+data_root = '/home/macong/project/A题全部数据/'
 
 def read_data():
     data1 = pd.read_csv(data_root+'基础数据.csv', encoding='GB2312')
@@ -60,7 +60,7 @@ def features_eng(data):
     # 缺失值填充，将列按出现频率由高到低排序，众数即第一行，inplace表示原地修改
 
     # 用众数对缺失值进行填补
-    data[features_fillna] = data[features_fillna].fillna(
+    data.loc[:,  features_fillna] = data[features_fillna].fillna(
         data[features_fillna].mode().iloc[0]
     )
 
@@ -71,7 +71,7 @@ def features_eng(data):
             continue
         if str(data[col].dtype) == 'object':
             # 字符->数值
-            data[col] = pd.factorize(
+            data.loc[:, col] = pd.factorize(
                 data[col])[0]
             # 获取one-hot编码
             dummies_df = pd.get_dummies(data[col], prefix=str(col))
@@ -81,5 +81,5 @@ def features_eng(data):
             # 对数值特征归一化
             scaler = preprocessing.StandardScaler().fit(
                 np.array(data[col]).reshape(-1, 1))
-            data[col] = scaler.transform(np.array(data[col]).reshape(-1, 1))
+            data.loc[:,  col] = scaler.transform(np.array(data[col]).reshape(-1, 1))
     return data
