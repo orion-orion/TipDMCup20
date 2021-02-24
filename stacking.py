@@ -4,11 +4,12 @@ Version: 1.0
 Author: ZhangHongYu
 Date: 2021-02-18 13:11:38
 LastEditors: ZhangHongYu
-LastEditTime: 2021-02-23 12:52:37
+LastEditTime: 2021-02-24 10:49:40
 '''
 from numpy import array
 import numpy as np
 from sklearn.model_selection import KFold
+from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -33,7 +34,7 @@ import joblib
 import os
 
 # 模型存放目录定义
-model_root = '/home/macong/project/model'
+model_root = '/public1/home/sc80074/TipDMCup20/model'
 k = 2  # 交叉验证折数
 
 #  基分类器和次级分类器定义，都是二分类，且定义网格超参数搜索
@@ -66,7 +67,7 @@ models.update({'xgb':
 param_grids = {}
 param_grids.update({
     'lr':
-    {'solver':["liblinear"], 'max_iter':[500], 'n_jobs':[-1]}
+    {'solver':["lbfgs"], 'max_iter':[500], 'n_jobs':[-1]}
 })
 param_grids.update({
     'dt':
@@ -97,8 +98,9 @@ param_grids.update({
 
  #  完成超参数网格搜索后的模型
 model_grids={}
+kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
 for name,  param in param_grids.items():
-    model_grids[name] = model_selection.GridSearchCV(models[name], param, n_jobs=-1, cv=10, verbose=1,scoring='f1')
+    model_grids[name] = model_selection.GridSearchCV(models[name], param, n_jobs=-1, cv=kfold, verbose=1,scoring='f1')
     # model_grids[name] = models[name]
 
 # 次级分类器定义

@@ -4,7 +4,7 @@ Version: 1.0
 Author: ZhangHongYu
 Date: 2021-02-18 13:15:08
 LastEditors: ZhangHongYu
-LastEditTime: 2021-02-23 19:04:47
+LastEditTime: 2021-02-24 10:49:17
 '''
 import pandas as pd
 import numpy as np
@@ -17,7 +17,7 @@ from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.tree import DecisionTreeClassifier
-# from xgboost import XGBClassifier
+from xgboost import XGBClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
@@ -30,35 +30,36 @@ from sklearn.model_selection import RandomizedSearchCV
 from imblearn.over_sampling import SMOTE
 from sklearn import model_selection
 from sklearn.feature_selection import SelectFromModel
+from sklearn import decomposition
 import joblib
 
 # 数据存放目录定义
 data_root = '/public1/home/sc80074/TipDMCup20/data/A题全部数据/'
 # 用于特征选择的模型的目录
 features_model_root = '/public1/home/sc80074/TipDMCup20/features_model'
+# 用于保存模型特征信息的目录
+features_imp_root = '/public1/home/sc80074/TipDMCup20/features_imp'
 
 top_n = 30 #选出的top-n特征
+
+pca_dim = 10 # pca 降维后的维度
 
 # 用于特征选择的模型定义
 models={}
 
-# models.update({'lr': 
-#     LogisticRegression(random_state=0)
-# })
+
 models.update({'dt':
     DecisionTreeClassifier(random_state=0)
 })
-models.update({'knn':
-    KNeighborsClassifier()})
 models.update({'rf': 
     RandomForestClassifier(random_state=0)
 })
 models.update({'et': 
     ExtraTreesClassifier(random_state=0)
 })
-# models.update({'xgb': 
-#     XGBClassifier(random_state=0)
-# })
+models.update({'xgb': 
+    XGBClassifier(random_state=0)
+})
 # models.update({'mlp': 
 #     MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(15,), random_state=1)
 # })
@@ -66,17 +67,9 @@ models.update({'et':
 
 # 用于特征选择的模型的超参数搜索范围定义
 param_grids = {}
-# param_grids.update({
-#     'lr':
-#     {'solver':["liblinear"], 'max_iter':[500], 'n_jobs':[-1]}
-# })
 param_grids.update({
     'dt':
     { 'min_samples_split': [2, 4], 'max_depth': [12]}
-})
-param_grids.update({
-    'knn':
-    {'n_neighbors':[ 5] }
 })
 param_grids.update({
     'rf':
@@ -86,10 +79,10 @@ param_grids.update({
     'et':
    {'n_estimators': [500], 'min_samples_split': [3, 4], 'max_depth': [12],'n_jobs':[-1]}
 })
-# param_grids.update({
-#     'xgb':
-#    {'n_estimators': [500],  'max_depth': [2], 'objective':['binary:logistic'], 'eval_metric':['logloss'],'use_label_encoder':[False],'nthread':[-1]}
-# })
+param_grids.update({
+    'xgb':
+   {'n_estimators': [500],  'max_depth': [2], 'objective':['binary:logistic'], 'eval_metric':['logloss'],'use_label_encoder':[False],'nthread':[-1]}
+})
 
 # param_grids.update({
 #     'mlp':
@@ -137,38 +130,38 @@ def read_data():
     combined_data['是否高转送'] = pd.Series(labels)
     return combined_data
 
-def features_selection(X, y):
+
+#用模型对特征进行选择
+def feature_selection(X, y):
     # SMOTE过采样
     smo = SMOTE(random_state=42, n_jobs=-1 )
     X_sampling,  y_sampling = smo.fit_resample(X, y)
 
-    #  # 用所有数据训练用于特征选择的模型
+     # 用所有数据训练用于特征选择的模型
     # for name, _  in model_grids.items():
-    #     # 这里才对model_grids[name]进行实际修改
-    #     model_grids[name].fit(X_sampling, y_sampling)
-    #     joblib.dump(model_grids[name], os.path.join(features_model_root, name +'.json'))
-    #     print(" features selection model %s has been trained " % (name))
+    #         # 这里才对model_grids[name]进行实际修改
+    #         model_grids[name].fit(X_sampling, y_sampling)
+    #         joblib.dump(model_grids[name], os.path.join(features_model_root, name +'.json'))
+    #         print(" features selection model %s has been trained " % (name))
 
     # 加载用于特征选择的模型并选出top-n的特征
     features_top_n_list = []
-    features_imp_list = []
     for name, _ in model_grids.items():
         model_grids[name] = joblib.load(os.path.join(features_model_root, name+'.json')) 
         model_grid = model_grids[name]
-        feature_imp_sorted = pd.DataFrame({'feature': list(X),
-                                            'importance': model_grid.best_estimator_.get_fscore()}).sort_values('importance', ascending=False)
-        features_top_n = feature_imp_sorted.head(top_n)['feature']
+        features_imp_sorted = pd.DataFrame({'feature': list(X),
+                                            'importance': model_grid.best_estimator_.feature_importances_}).sort_values('importance', ascending=False)
+        features_top_n = features_imp_sorted.head(top_n)['feature']
+        features_top_n_imp =  features_imp_sorted.head(top_n)['importance']
         features_top_n_list.append(features_top_n)
-        features_imp_list.append(feature_imp_sorted)
+        features_output = pd.DataFrame({'features_top_n':features_top_n, 'importance':features_top_n_imp})
+        features_output.to_csv(os.path.join(features_imp_root, name+'_features_top_n_importance.csv'))
     features_top_n = pd.concat(features_top_n_list, ignore_index=True).drop_duplicates()
-    features_importance = pd.concat(features_imp_list, ignore_index=True)
-    X = pd.DataFrame(X[feature_top_n])
-    features_output = pd.DataFrame({'features_top_n':features_top_n, 'importance':features_importance})
-    features_output.to_csv(os.path.join(features_model_root, 'features_top_n_importance.csv'))
-    return X, y
+    X = pd.DataFrame(X[features_top_n])
+    return X
 
 
-def features_eng(data):
+def data_preprocess(data):
     #  获得每个特征的缺失信息
     null_info = data.isnull().sum(axis=0)
     #  丢弃缺失值多于30%的特征
@@ -193,7 +186,7 @@ def features_eng(data):
             # 字符->数值
             data.loc[:, col] = pd.factorize(
                 data[col])[0]
-            # 获取one-hot编码
+            # 获取dummy编码
             dummies_df = pd.get_dummies(data[col], prefix=str(col))
             data = data.drop(col, axis=1)
             data = data.join(dummies_df)
@@ -203,3 +196,9 @@ def features_eng(data):
                 np.array(data[col]).reshape(-1, 1))
             data.loc[:,  col] = scaler.transform(np.array(data[col]).reshape(-1, 1))        
     return data
+
+def data_decomposition(X):
+    pca = decomposition.PCA()
+    pca.fit(X)
+    pca.n_components = pca_dim
+    return pca.fit_transform(X)
