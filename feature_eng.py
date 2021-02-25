@@ -4,7 +4,7 @@ Version: 1.0
 Author: ZhangHongYu
 Date: 2021-02-18 13:15:08
 LastEditors: ZhangHongYu
-LastEditTime: 2021-02-24 10:49:17
+LastEditTime: 2021-02-25 12:21:03
 '''
 import pandas as pd
 import numpy as np
@@ -31,6 +31,7 @@ from imblearn.over_sampling import SMOTE
 from sklearn import model_selection
 from sklearn.feature_selection import SelectFromModel
 from sklearn import decomposition
+from sklearn.feature_extraction import DictVectorizer
 import joblib
 
 # 数据存放目录定义
@@ -179,22 +180,48 @@ def data_preprocess(data):
     )
 
     # 字符独热编码，数值归一化
+
+    # 先处理所属概念板块这一列
+    all_types = {} #总共的types种类
+    for idx, combined_type in data['所属概念板块'].items():
+        types = combined_type.split(';')
+        dict_type = {}
+        for type_ in types:
+            dict_type[type_] = 1
+            all_types[type_] = 1
+        data['所属概念板块'][idx] = dict_type
+    for idx, dict_type in data['所属概念板块'].items():
+        for k in all_types.keys():
+            if k in dict_type.keys():
+                continue
+            else:
+                data['所属概念板块'][idx][k] = 0
+
     for col in data.columns:
         if col == '是否高转送':  # 跳过标签列
             continue
+        if col == '所属概念板块': #对所属概念板块单独处理
+            vec = DictVectorizer()
+            arr = np.array(vec.fit_transform(data[col].to_list()).toarray())
+            data = data.drop(col, axis=1)
+            for i in range(arr.shape[1]):
+                data = data.join(pd.DataFrame({col+str(i): arr[:, i]}))
+            continue
         if str(data[col].dtype) == 'object':
-            # 字符->数值
-            data.loc[:, col] = pd.factorize(
-                data[col])[0]
+            #  这里标称形不是连续的，不能直接转换为数值
+            # data.loc[:, col] = pd.factorize(
+            #     data[col])[0]
             # 获取dummy编码
             dummies_df = pd.get_dummies(data[col], prefix=str(col))
             data = data.drop(col, axis=1)
             data = data.join(dummies_df)
         else:
-            # 对数值特征归一化
+            # 对数值特征z-score标准化
             scaler = preprocessing.StandardScaler().fit(
                 np.array(data[col]).reshape(-1, 1))
-            data.loc[:,  col] = scaler.transform(np.array(data[col]).reshape(-1, 1))        
+            data.loc[:,  col] = scaler.transform(np.array(data[col]).reshape(-1, 1))  
+            # 对数值特征二范数归一化，该操作独立对待样本，无需对normalizer进行fit
+            data.loc[:, col] = preprocessing.normalize(np.array(data[col]).reshape(-1, 1),norm='l2')
     return data
 
 def data_decomposition(X):
