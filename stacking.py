@@ -4,7 +4,7 @@ Version: 1.0
 Author: ZhangHongYu
 Date: 2021-02-18 13:11:38
 LastEditors: ZhangHongYu
-LastEditTime: 2021-02-25 12:21:14
+LastEditTime: 2021-02-28 09:57:43
 '''
 from numpy import array
 import numpy as np
@@ -31,11 +31,12 @@ from imblearn.over_sampling import SMOTE
 from sklearn.metrics import precision_recall_curve
 from sklearn import model_selection
 import joblib
+import pandas as pd
 import os
 
 # 模型存放目录定义
 model_root = '/public1/home/sc80074/TipDMCup20/model'
-k = 2  # 交叉验证折数
+k = 5  # 交叉验证折数
 
 #  基分类器和次级分类器定义，都是二分类，且定义网格超参数搜索
 #  基分类器定义
@@ -231,3 +232,54 @@ def evaluate_model(X_test, y_test):
     print("Meta  model f1: %.3f " % f1)
     print('Meta model auc  %.3f' % (auc))
 
+def evaluate_model(X_test, y_test):
+
+    print("********************  evaluation  ***********************")
+
+    #  基分类器和次级分类器定义
+    for name, _ in model_grids.items():
+        model_grids[name] = joblib.load(os.path.join(model_root, name+'.json'))
+        # 对初级分类器进行评估
+        model_grid = model_grids[name]
+        acc = accuracy_score(y_test, model_grid.predict(X_test))
+        recall = recall_score(y_test, model_grid.predict(X_test))
+        preci = precision_score(y_test, model_grid.predict(X_test))
+        f1 = f1_score(y_test, model_grid.predict(X_test))
+        auc = roc_auc_score(y_test, model_grid.predict_proba(X_test)[:, 0])
+        print(" Sub model %s accuracy: : %.3f " % (name, acc))
+        print(" Sub model %s recalll: %.3f " % (name, recall))
+        print(" Sub model %s precision: %.3f " % (name, preci))
+        print(" Sub model %s f1: %.3f " % (name, f1))
+        print(" Sub model %s auc: %.3f " % (name, auc))
+
+
+    meta_model = joblib.load(os.path.join(model_root, 'meta_model.json'))
+    #  对次级分类器进行评估
+    y_hat, y_hat_proba= stack_prediction(model_grids,  meta_model, X_test)
+    acc = accuracy_score(y_test,  y_hat)
+    recall = recall_score(y_test, y_hat)
+    preci = precision_score(y_test, y_hat)
+    f1 = f1_score(y_test, y_hat)
+    auc = roc_auc_score(y_test, y_hat_proba)
+    print('Meta model accuracy: %.3f' % (acc))
+    print('Meta model recall: %.3f' % (recall))
+    print('Meta model precision %.3f' % (preci))
+    print("Meta  model f1: %.3f " % f1)
+    print('Meta model auc  %.3f' % (auc))
+
+
+def predict(X_submission):
+
+    print("********************  evaluation  ***********************")
+
+    #  基分类器和次级分类器进行加载
+    for name, _ in model_grids.items():
+        model_grids[name] = joblib.load(os.path.join(model_root, name+'.json'))
+        # 用初级分类器进行预测
+        model_grid = model_grids[name]
+
+    meta_model = joblib.load(os.path.join(model_root, 'meta_model.json'))
+    #  用次级分类器进行预测
+    y_hat, _= stack_prediction(model_grids,  meta_model, X_submission)
+    predictions = pd.DataFrame({'prediction':y_hat})
+    predictions.to_csv('prediction/prediction.csv')
