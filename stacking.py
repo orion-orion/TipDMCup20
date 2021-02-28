@@ -4,7 +4,7 @@ Version: 1.0
 Author: ZhangHongYu
 Date: 2021-02-18 13:11:38
 LastEditors: ZhangHongYu
-LastEditTime: 2021-02-28 09:57:43
+LastEditTime: 2021-02-28 11:03:29
 '''
 from numpy import array
 import numpy as np
@@ -268,9 +268,9 @@ def evaluate_model(X_test, y_test):
     print('Meta model auc  %.3f' % (auc))
 
 
-def predict(X_submission):
+def predict(X_submission, ids):
 
-    print("********************  evaluation  ***********************")
+    print("********************  prediction  ***********************")
 
     #  基分类器和次级分类器进行加载
     for name, _ in model_grids.items():
@@ -281,5 +281,7 @@ def predict(X_submission):
     meta_model = joblib.load(os.path.join(model_root, 'meta_model.json'))
     #  用次级分类器进行预测
     y_hat, _= stack_prediction(model_grids,  meta_model, X_submission)
-    predictions = pd.DataFrame({'prediction':y_hat})
-    predictions.to_csv('prediction/prediction.csv')
+    predictions = pd.DataFrame({'股票编号':ids, 'prediction':y_hat})
+    predictions.to_csv('prediction/prediction.csv', index=False)
+
+    print("*****************  prediction  finished! *******************")

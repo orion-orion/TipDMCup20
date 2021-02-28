@@ -4,7 +4,7 @@ Version: 1.0
 Author: ZhangHongYu
 Date: 2021-02-27 11:20:37
 LastEditors: ZhangHongYu
-LastEditTime: 2021-02-28 10:01:03
+LastEditTime: 2021-02-28 11:01:45
 '''
 import matplotlib.pyplot as plt
 import numpy as np
@@ -28,6 +28,4 @@ if __name__ == '__main__':
     plt.ylabel('True Positive Rate')
     plt.title('ROC')
     plt.plot(np.linspace(0, 1, 1000), np.linspace(0, 1, 1000), linestyle='--')
-    plt.savefig('roc曲线.png')
-
- 
+    plt.savefig('ROC曲线.png')

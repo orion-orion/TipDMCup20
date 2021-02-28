@@ -4,7 +4,7 @@ Version: 1.0
 Author: ZhangHongYu
 Date: 2021-02-18 13:18:01
 LastEditors: ZhangHongYu
-LastEditTime: 2021-02-28 09:57:18
+LastEditTime: 2021-02-28 11:04:20
 '''
 from feature_eng import read_data
 from feature_eng import data_preprocess
@@ -21,10 +21,11 @@ import pandas as pd
 if __name__ == '__main__':
 
     data = read_data()
-    # print(data.tail())
 
     data = data_preprocess(data)
 
+    ids = data[data['年份copy'] ==7]['股票编号'] #后面股票编号要做特征，这里先提取出来
+    data = data.drop('股票编号', axis=1)
     submission_X = data[data['年份copy'] ==7]. drop('是否高转送', axis=1).drop('年份copy', axis=1)
     my_data = data[data['年份copy'] != 7].drop('年份copy', axis=1)
 
@@ -49,4 +50,4 @@ if __name__ == '__main__':
     evaluate_model(X_test, y_test)
 
     # 预测题目要求的高送转结果
-    predict(np.array(submission_X))
+    predict(np.array(submission_X), ids)

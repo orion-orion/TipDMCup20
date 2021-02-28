@@ -4,7 +4,7 @@ Version: 1.0
 Author: ZhangHongYu
 Date: 2021-02-18 13:15:08
 LastEditors: ZhangHongYu
-LastEditTime: 2021-02-28 09:57:29
+LastEditTime: 2021-02-28 11:03:48
 '''
 import pandas as pd
 import numpy as np
@@ -231,9 +231,8 @@ def data_preprocess(data):
             #  这里标称形不是连续的，不能直接转换为数值
             # data.loc[:, col] = pd.factorize(
             #     data[col])[0]
-            # 只能转换为dummy编码，以下为获取dummy编码
+            # 只能转换为dummy编码，以下为获取dummy编码, 后面还要用，暂时保存副本
             dummies_df = pd.get_dummies(data[col], prefix=str(col))
-            data = data.drop(col, axis=1)
             data = data.join(dummies_df)
             continue
         if col == '所属概念板块': #对所属概念板块单独处理
