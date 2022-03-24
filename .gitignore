@@ -6,10 +6,7 @@ __pycache__/
 # data and model files
 data/
 !data/.gitkeep
-features_model/
-!features_model/.gitkeep
-model/
-!model/.gitkeep
+
 
 
 
