@@ -4,7 +4,7 @@ Version: 1.0
 Author: ZhangHongYu
 Date: 2021-02-18 13:15:08
 LastEditors: ZhangHongYu
-LastEditTime: 2022-03-24 14:56:46
+LastEditTime: 2022-03-24 15:19:46
 '''
 import pandas as pd
 import numpy as np
@@ -139,14 +139,15 @@ def read_data():
 
 
 #用模型对特征进行选择
-def feature_selection(X, y, flag):
+def feature_selection(X, y, mod):
     #根据阈值移除低方差特征
     # 假设是布尔特征，我们想要移除特征值为0或者为1的比例超过0.8的特征
     # 布尔特征为Bernoulli随机变量，方差为p(1-p)
     # 该方法的输出会把特征名去掉，故不采用
     # sel = VarianceThreshold(threshold=(.8 * (1 - .8)))
     # X_sel = sel.fit_transform(X)
-    if flag == 'train': #如果是对训练集进行特征选择
+    features_top_n_list = []
+    if mod == 'retrain': #如果是'ratrain'则重新对特征选择的模型进行训练，并保存结果
         if not os.path.exists(features_model_root):
             os.makedirs(features_model_root)
         # SMOTE过采样
@@ -159,22 +160,34 @@ def feature_selection(X, y, flag):
                 model_grids[name].fit(X_sampling, y_sampling)
                 joblib.dump(model_grids[name], os.path.join(features_model_root, name +'.json'))
                 print(" features selection model %s has been trained " % (name))
-                
-    if not os.path.exists(features_imp_root):
-        os.makedirs(features_imp_root)
+
+        if not os.path.exists(features_imp_root):
+            os.makedirs(features_imp_root)
+        
+        for name, _ in model_grids.items():
+            model_grids[name] = joblib.load(os.path.join(features_model_root, name+'.json')) 
+            model_grid = model_grids[name]
+            features_imp_sorted = pd.DataFrame({'feature': list(X),
+                                                'importance': model_grid.best_estimator_.feature_importances_}).sort_values('importance', ascending=False)
+            features_top_n = features_imp_sorted.head(top_n)['feature']
+            features_top_n_imp =  features_imp_sorted.head(top_n)['importance']
+            features_top_n_list.append(features_top_n)
+            features_output = pd.DataFrame({'features_top_n':features_top_n, 'importance':features_top_n_imp})
+            features_output.to_csv(os.path.join(features_imp_root, name+'_features_top_n_importance.csv'))
+
+    elif mod == 'load': #如果是则直接加载已经得到的特征选择结果
+        if not os.path.exists(features_imp_root):
+            raise IOError("cant find the features imp directory: %s" % features_imp_root)
+        for name, _ in model_grids.items():
+            features_top_n = pd.read_csv(os.path.join(features_imp_root, name+'_features_top_n_importance.csv'))['features_top_n']
+            features_top_n_list.append(features_top_n)
+
+    else:
+        raise IOError("invalid mod!") 
+        
+        
 
     # 加载用于特征选择的模型并选出top-n的特征
-    features_top_n_list = []
-    for name, _ in model_grids.items():
-        model_grids[name] = joblib.load(os.path.join(features_model_root, name+'.json')) 
-        model_grid = model_grids[name]
-        features_imp_sorted = pd.DataFrame({'feature': list(X),
-                                            'importance': model_grid.best_estimator_.feature_importances_}).sort_values('importance', ascending=False)
-        features_top_n = features_imp_sorted.head(top_n)['feature']
-        features_top_n_imp =  features_imp_sorted.head(top_n)['importance']
-        features_top_n_list.append(features_top_n)
-        features_output = pd.DataFrame({'features_top_n':features_top_n, 'importance':features_top_n_imp})
-        features_output.to_csv(os.path.join(features_imp_root, name+'_features_top_n_importance.csv'))
     features_top_n = pd.concat(features_top_n_list, ignore_index=True).drop_duplicates()
     X = pd.DataFrame(X[features_top_n])
     return X

@@ -4,7 +4,7 @@ Version: 1.0
 Author: ZhangHongYu
 Date: 2021-02-18 13:11:38
 LastEditors: ZhangHongYu
-LastEditTime: 2021-02-28 11:03:29
+LastEditTime: 2022-03-24 15:33:39
 '''
 from numpy import array
 import numpy as np
@@ -35,7 +35,7 @@ import pandas as pd
 import os
 
 # 模型存放目录定义
-model_root = '/public1/home/sc80074/TipDMCup20/model'
+model_root = './model'
 k = 5  # 交叉验证折数
 
 #  基分类器和次级分类器定义，都是二分类，且定义网格超参数搜索
@@ -108,6 +108,10 @@ for name,  param in param_grids.items():
 meta_model =  XGBClassifier(n_estimators=500, max_depth=2, min_child_weight=2, gamma=0.9, subsample=0.8,  colsample_bytree=0.8, objective='binary:logistic', nthread=-1, scale_pos_weight=1, eval_metric='logloss', use_label_encoder=False)
 # meta_model = LogisticRegression(solver='liblinear')
 def train_model(X, y):
+
+    if not os.path.exists(model_root):
+        os.makedirs(model_root)
+            
     # SMOTE过采样
     smo = SMOTE(random_state=42, n_jobs=-1 )
     X_sampling,  y_sampling = smo.fit_resample(X, y)
@@ -198,7 +202,9 @@ def stack_prediction(model_grids,  meta_model, X):
 
 # 对基分类器和次级分类器进行评估
 def evaluate_model(X_test, y_test):
-
+    if not os.path.exists(model_root):
+        raise IOError("cant find the model directory: %s" % model_root)
+        
     print("********************  evaluation  ***********************")
 
     #  基分类器和次级分类器定义
@@ -233,6 +239,8 @@ def evaluate_model(X_test, y_test):
     print('Meta model auc  %.3f' % (auc))
 
 def evaluate_model(X_test, y_test):
+    if not os.path.exists(model_root):
+        raise IOError("cant find the model directory: %s" % model_root)
 
     print("********************  evaluation  ***********************")
 
@@ -270,6 +278,9 @@ def evaluate_model(X_test, y_test):
 
 def predict(X_submission, ids):
 
+    if not os.path.exists(model_root):
+        raise IOError("cant find the model directory: %s" % model_root)
+    
     print("********************  prediction  ***********************")
 
     #  基分类器和次级分类器进行加载

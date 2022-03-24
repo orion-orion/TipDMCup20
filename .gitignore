@@ -3,10 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# data files
+# data and model files
 data/*.csv
-features_model/*.json
-model/*.json
+features_model/*
+!features_model/.gitkeep
+model/*
+!model/.gitkeep
 
 
 
