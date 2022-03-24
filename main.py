@@ -4,7 +4,7 @@ Version: 1.0
 Author: ZhangHongYu
 Date: 2021-02-18 13:18:01
 LastEditors: ZhangHongYu
-LastEditTime: 2021-03-24 09:58:21
+LastEditTime: 2022-03-24 14:20:25
 '''
 from feature_eng import read_data
 from feature_eng import data_preprocess
@@ -34,8 +34,8 @@ if __name__ == '__main__':
     X = my_data.drop('是否高转送', axis=1)
 
     #用模型对特征进行选择并输出特征选择结果
-    X = feature_selection(X, y, 'predict')
-    submission_X = feature_selection(submission_X, None, 'predict')
+    X = feature_selection(X, y, 'train')
+    submission_X = feature_selection(submission_X, None, 'train')
 
     # 对数据集进行降维处理
     # X = data_decomposition(X)

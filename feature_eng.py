@@ -4,7 +4,7 @@ Version: 1.0
 Author: ZhangHongYu
 Date: 2021-02-18 13:15:08
 LastEditors: ZhangHongYu
-LastEditTime: 2021-02-28 11:03:48
+LastEditTime: 2022-03-24 14:41:46
 '''
 import pandas as pd
 import numpy as np
@@ -37,11 +37,11 @@ from scipy.interpolate import interp1d
 import joblib
 
 # 数据存放目录定义
-data_root = '/public1/home/sc80074/TipDMCup20/data/A题全部数据'
+data_root = './data'
 # 用于特征选择的模型的目录
-features_model_root = '/public1/home/sc80074/TipDMCup20/features_model'
+features_model_root = './features_model'
 # 用于保存模型特征信息的目录
-features_imp_root = '/public1/home/sc80074/TipDMCup20/features_imp'
+features_imp_root = './features_imp'
 
 pca_dim = 10 # pca 降维后的维度
 
