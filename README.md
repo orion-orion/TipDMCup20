@@ -4,7 +4,7 @@
  * @Author: ZhangHongYu
  * @Date: 2021-09-19 19:53:57
  * @LastEditors: ZhangHongYu
- * @LastEditTime: 2022-03-24 15:51:46
+ * @LastEditTime: 2022-03-24 16:38:20
 -->
 
 # 基于数据挖掘的上市公司高送转预测
@@ -20,8 +20,11 @@
 ### 环境配置
 
 Python (3.6)
+
 numpy (1.19.5)
+
 pandas (1.1.5)
+
 scikit-learn (0.24.1)
 
 ### 数据集
