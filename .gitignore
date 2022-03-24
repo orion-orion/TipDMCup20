@@ -3,10 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+
 # data and model files
 data/
-# !data/.gitkeep
-# !data/roc_data.csv
+!data/.gitkeep
+!data/roc_data.csv
 
 
 
