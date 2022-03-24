@@ -4,15 +4,16 @@
  * @Author: ZhangHongYu
  * @Date: 2021-09-19 19:53:57
  * @LastEditors: ZhangHongYu
- * @LastEditTime: 2022-03-24 17:11:41
+ * @LastEditTime: 2022-03-24 18:27:38
 -->
 
 # 基于数据挖掘的上市公司高送转预测
 
 [![Open Source Love](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)](https://github.com/orion-orion/TipDMCup20)
 [![](https://img.shields.io/github/license/orion-orion/TipDMCup20)](https://github.com/orion-orion/TipDMCup20/blob/master/LICENSE)
+[![](https://img.shields.io/github/stars/orion-orion/TipDMCup20?style=social)](https://github.com/orion-orion/TipDMCup20)
+[![](https://img.shields.io/github/issues/orion-orion/TipDMCup20)](https://github.com/orion-orion/TipDMCup20/issues)
 
-​
 
 ### 赛题要求
 
