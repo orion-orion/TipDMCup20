@@ -4,7 +4,7 @@ Version: 1.0
 Author: ZhangHongYu
 Date: 2021-02-18 13:15:08
 LastEditors: ZhangHongYu
-LastEditTime: 2022-03-24 14:41:46
+LastEditTime: 2022-03-24 14:56:46
 '''
 import pandas as pd
 import numpy as np
@@ -147,6 +147,8 @@ def feature_selection(X, y, flag):
     # sel = VarianceThreshold(threshold=(.8 * (1 - .8)))
     # X_sel = sel.fit_transform(X)
     if flag == 'train': #如果是对训练集进行特征选择
+        if not os.path.exists(features_model_root):
+            os.makedirs(features_model_root)
         # SMOTE过采样
         smo = SMOTE(random_state=42, n_jobs=-1 )
         X_sampling,  y_sampling = smo.fit_resample(X, y)
@@ -157,6 +159,9 @@ def feature_selection(X, y, flag):
                 model_grids[name].fit(X_sampling, y_sampling)
                 joblib.dump(model_grids[name], os.path.join(features_model_root, name +'.json'))
                 print(" features selection model %s has been trained " % (name))
+                
+    if not os.path.exists(features_imp_root):
+        os.makedirs(features_imp_root)
 
     # 加载用于特征选择的模型并选出top-n的特征
     features_top_n_list = []
