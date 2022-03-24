@@ -7,9 +7,11 @@ __pycache__/
 # data and model files
 data/
 !data/.gitkeep
-!data/roc_data.csv
 
 
+# draw pic file
+plot_roc1.py
+plot_roc2.py
 
 # C extensions
 *.so
