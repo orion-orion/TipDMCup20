@@ -11,6 +11,9 @@ data/*.csv
 plot_roc1.py
 plot_roc2.py
 
+# bash file
+run.sh
+
 # C extensions
 *.so
 
