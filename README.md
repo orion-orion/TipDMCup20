@@ -4,7 +4,7 @@
  * @Author: ZhangHongYu
  * @Date: 2021-09-19 19:53:57
  * @LastEditors: ZhangHongYu
- * @LastEditTime: 2022-05-15 21:50:13
+ * @LastEditTime: 2022-05-15 21:53:20
 -->
 
 # 基于数据挖掘的上市公司高送转预测
@@ -32,7 +32,9 @@ pip install -r requirements.txt
 
 ### 数据集
 
-数据集直接采用的赛方给定的企业高送转数据集，放在项目目录中的data文件夹下。下载链接可参见：[Google drive 下载链接](https://drive.google.com/drive/folders/1ULeSHtIW-rVpqiQyEB_OONA3vUdxDAYU?usp=sharing)
+数据集直接采用的赛方给定的企业高送转数据集，放在项目目录中的data文件夹下。下载链接可参见：
+
+[Google drive 下载链接](https://drive.google.com/drive/folders/1ULeSHtIW-rVpqiQyEB_OONA3vUdxDAYU?usp=sharing)
 
 
 ### 项目目录说明
