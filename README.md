@@ -4,7 +4,7 @@
  * @Author: ZhangHongYu
  * @Date: 2021-09-19 19:53:57
  * @LastEditors: ZhangHongYu
- * @LastEditTime: 2022-03-24 18:27:38
+ * @LastEditTime: 2022-05-15 21:50:13
 -->
 
 # 基于数据挖掘的上市公司高送转预测
@@ -23,21 +23,17 @@
 
 采用stacking集成学习结构，基分类器包括LR, KNN, DecisionTree, ExtraTree, RF, XGBoost。第二层次级分类器采用XGBoost。因为是正负样本不均衡问题，我们采用SMOTE过采样技术对正负样本进行平衡，并采用AUC-Score做为模型评价标准，最终的stakcing模型在测试集上取得了84%的AUC-Score，对应的ROC曲线图片 ROC曲线.png 在项目目录下。具体Stacking架构如项目目录下的图片 stacking.png 所示。
 
-### 环境配置
+### 环境依赖
+运行以下命令安装环境依赖：
 
-Python (3.6)
-
-numpy (1.19.5)
-
-pandas (1.1.5)
-
-scikit-learn (0.24.1)
+```shell
+pip install -r requirements.txt
+```
 
 ### 数据集
 
-数据集直接采用的赛方给定的企业高送转数据集，放在项目目录中的data文件夹下。下载链接可参见：https://pan.baidu.com/s/1RoSeDLhY4-1F2brVq09aQw
+数据集直接采用的赛方给定的企业高送转数据集，放在项目目录中的data文件夹下。下载链接可参见：[Google drive 下载链接](https://drive.google.com/drive/folders/1ULeSHtIW-rVpqiQyEB_OONA3vUdxDAYU?usp=sharing)
 
-提取密码：0t39
 
 ### 项目目录说明
 
