@@ -6,7 +6,7 @@ __pycache__/
 
 # data files
 data/*.csv
-
+!data/roc_data.csv
 
 # model files
 model/*.json
