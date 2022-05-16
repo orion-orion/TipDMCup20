@@ -4,7 +4,7 @@
  * @Author: ZhangHongYu
  * @Date: 2021-09-19 19:53:57
  * @LastEditors: ZhangHongYu
- * @LastEditTime: 2022-05-16 15:33:29
+ * @LastEditTime: 2022-05-16 18:41:10
 -->
 
 # 基于数据挖掘的上市公司高送转预测
@@ -21,7 +21,9 @@
 
 ### 模型架构
 
-采用stacking集成学习结构，基分类器包括LR, KNN, DecisionTree, ExtraTree, RF, XGBoost。第二层次级分类器采用XGBoost。因为是正负样本不均衡问题，我们采用SMOTE过采样技术对正负样本进行平衡，并采用AUC-Score做为模型评价标准，最终的stacking模型在测试集上取得了84%的AUC-Score，对应的ROC曲线图片 ROC曲线.png 在项目目录下。具体Stacking架构如项目目录下的图片 stacking.png 所示。
+采用stacking集成学习结构，基分类器包括LR, KNN, DecisionTree, ExtraTree, RF, XGBoost。第二层次级分类器采用XGBoost。因为是正负样本不均衡问题，我们采用SMOTE过采样技术对正负样本进行平衡，并采用AUC-Score做为模型评价标准。具体Stacking架构如项目目录下所示：
+
+<img src="pic/stacking.png" >
 
 ### 环境依赖
 运行以下命令安装环境依赖：
