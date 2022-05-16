@@ -4,7 +4,7 @@
  * @Author: ZhangHongYu
  * @Date: 2021-09-19 19:53:57
  * @LastEditors: ZhangHongYu
- * @LastEditTime: 2022-05-16 18:41:10
+ * @LastEditTime: 2022-05-16 18:43:31
 -->
 
 # 基于数据挖掘的上市公司高送转预测
@@ -49,13 +49,13 @@ pip install -r requirements.txt
 
 -model  -------------------  存放最终训练的相关模型
 
--prediction  -------------------  存放对第８年数据的预测结果
+-pic  -------------------  存放Stacking架构图
 
--main.py  -------------------  主文件，用于从构建特征工程到模型的训练与评估的pipline
+-prediction  -------------------  存放对第８年数据的预测结果
 
 -feature_eng.py  -------------------  特征工程的实现，包括数据预处理、特征选择、降维等
 
--plot_roc.py  -------------------  用于AUC曲线的绘制
+-main.py  -------------------  主文件，用于从构建特征工程到模型的训练与评估的pipline
 
 -stacking.py  -------------------  stacking集成学习的模型代码
 
