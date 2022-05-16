@@ -4,7 +4,7 @@ Version: 1.0
 Author: ZhangHongYu
 Date: 2021-02-18 13:11:38
 LastEditors: ZhangHongYu
-LastEditTime: 2022-03-24 15:33:39
+LastEditTime: 2022-05-15 22:02:52
 '''
 from numpy import array
 import numpy as np
@@ -36,7 +36,7 @@ import os
 
 # 模型存放目录定义
 model_root = './model'
-k = 5  # 交叉验证折数
+k = 2  # 交叉验证折数
 
 #  基分类器和次级分类器定义，都是二分类，且定义网格超参数搜索
 #  基分类器定义

@@ -7,6 +7,11 @@ __pycache__/
 # data files
 data/*.csv
 
+
+# model files
+model/*.json
+features_model/*.json
+
 # draw pic file
 plot_roc1.py
 plot_roc2.py
