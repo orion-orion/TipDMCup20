@@ -4,7 +4,7 @@ Version: 1.0
 Author: ZhangHongYu
 Date: 2021-02-18 13:15:08
 LastEditors: ZhangHongYu
-LastEditTime: 2022-05-16 15:01:16
+LastEditTime: 2022-05-16 15:36:04
 '''
 import pandas as pd
 import numpy as np
@@ -210,7 +210,7 @@ def data_preprocess(data):
     for feature in features_fillna:
         # 如果是非数值型特征或者是整型离散数值，用众数填补
         #将列按出现频率由高到低排序，众数即第一行，inplace表示原地修改
-        if str(data[feature].dtype) == 'object' or str(data[feature].dtype) =='int64':
+        if isinstance(data[feature], object) or isinstance(data[feature], int):
             data.loc[:,  feature] = data[feature].fillna(
                 data[feature].mode().iloc[0]
             )
@@ -260,7 +260,7 @@ def data_preprocess(data):
             for i in range(arr.shape[1]):
                 data = data.join(pd.DataFrame({(col+str(i)): arr[:, i]}))
             continue
-        if str(data[col].dtype) == 'object':
+        if isinstance(data[col], object):
             #  这里标称形不是连续的，不能直接转换为数值
             # data.loc[:, col] = pd.factorize(
             #     data[col])[0]
